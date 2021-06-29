@@ -42,11 +42,12 @@ class App extends Component {
 	onButtonSubmit = () => {
 		this.setState({imageUrl: this.state.input})
 		app.models.predict(
-			Clarifai.FACE_DETECT_MODEL, 
+			'e466caa0619f444ab97497640cefc4dc', 
 			this.state.input).then(
 			function(response) {
-				console.log(response.outputs[0].data.regions[0].region_info.bounding_box)
-			},
+				console.log(response.outputs[0].data.regions[0].data.concepts[0].name)
+			}, 	//response.outputs[0].data.regions[0].region_info.bounding_box
+				//response.outputs[0].data.regions[0].data.concepts[0].name
 			function(err) {
 
 			}
