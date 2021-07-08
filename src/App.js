@@ -31,8 +31,26 @@ class App extends Component {
 		super();
 		this.state = {
 			input : '',
-			imageUrl: ''
+			imageUrl: '',
+			box: {}
 		}
+	}
+
+	calculateFaceLocation = (data) => {
+		const face = data.outputs[0].data.regions[0].region_info.bounding_box;
+		const image = document.getElementById('inputimage');
+		const width = Number(image.width);
+		const height = Number(image.height);
+		return {
+			leftCol: face.leftCol * width,
+			topRow: face.topRow * height,
+			rightCol: width - (face.rightCol * width),
+			bottomRow: height - (face.bottomRow * height)
+		}
+	}
+
+	displayFaceBox = (box) => {
+		this.setState = ({box: box});
 	}
 
 	onInputChange = (event) => {
@@ -40,18 +58,12 @@ class App extends Component {
 	}
 
 	onButtonSubmit = () => {
-		this.setState({imageUrl: this.state.input})
+		this.setState({imageUrl: this.state.input});
 		app.models.predict(
 			'e466caa0619f444ab97497640cefc4dc', 
-			this.state.input).then(
-			function(response) {
-				console.log(response.outputs[0].data.regions[0].data.concepts[0].name)
-			}, 	//response.outputs[0].data.regions[0].region_info.bounding_box
-				//response.outputs[0].data.regions[0].data.concepts[0].name
-			function(err) {
-
-			}
-		)
+			this.state.input)
+			.then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
+			.catch(err => console.log(err))
 	}
 
 	render() {
@@ -63,7 +75,7 @@ class App extends Component {
 				<Rank />
 				<ImageLinkForm onInputChange={this.onInputChange} 
 							onButtonSubmit={this.onButtonSubmit}/>
-				<FaceRecognition imageUrl={this.state.imageUrl}/>
+				<FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
 			</div>
 		);
 	}
@@ -71,3 +83,7 @@ class App extends Component {
 }
 
 export default App;
+
+//console.log(response.outputs[0].data.regions[0].data.concepts[0].name)
+//response.outputs[0].data.regions[0].region_info.bounding_box
+//response.outputs[0].data.regions[0].data.concepts[0].name
