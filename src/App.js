@@ -36,21 +36,23 @@ class App extends Component {
 		}
 	}
 
-	calculateFaceLocation = (data) => {
-		const face = data.outputs[0].data.regions[0].region_info.bounding_box;
+	calculateFaceLocation = (input) => {
+		const face = input.outputs[0].data.regions[0].region_info.bounding_box;
 		const image = document.getElementById('inputimage');
 		const width = Number(image.width);
 		const height = Number(image.height);
+		console.log(input.outputs[0].data.regions[0].data.concepts[0].name);
 		return {
-			leftCol: face.leftCol * width,
-			topRow: face.topRow * height,
-			rightCol: width - (face.rightCol * width),
-			bottomRow: height - (face.bottomRow * height)
+			top_row: face.top_row * height,
+			left_col: face.left_col * width,
+			bottom_row: height - (face.bottom_row * height),
+			right_col: width - (face.right_col * width),
 		}
 	}
 
-	displayFaceBox = (box) => {
-		this.setState = ({box: box});
+	displayFaceBox = (newBox) => {
+		this.setState = ({box: newBox});
+		console.log(newBox);
 	}
 
 	onInputChange = (event) => {
